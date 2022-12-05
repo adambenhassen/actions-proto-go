@@ -5,7 +5,7 @@
 package pingv1connect
 
 import (
-	v1 "code.gitea.io/bots-proto-go/ping/v1"
+	v1 "code.gitea.io/actions-proto-go/ping/v1"
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"

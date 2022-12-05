@@ -5,7 +5,7 @@
 package runnerv1connect
 
 import (
-	v1 "code.gitea.io/bots-proto-go/runner/v1"
+	v1 "code.gitea.io/actions-proto-go/runner/v1"
 	context "context"
 	errors "errors"
 	connect_go "github.com/bufbuild/connect-go"
