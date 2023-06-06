@@ -29,6 +29,8 @@ const (
 type RunnerServiceClient interface {
 	// Register register a new runner in server.
 	Register(context.Context, *connect_go.Request[v1.RegisterRequest]) (*connect_go.Response[v1.RegisterResponse], error)
+	// Declare declare runner's version and labels to Gitea before starting fetching task.
+	Declare(context.Context, *connect_go.Request[v1.DeclareRequest]) (*connect_go.Response[v1.DeclareResponse], error)
 	// FetchTask requests the next available task for execution.
 	FetchTask(context.Context, *connect_go.Request[v1.FetchTaskRequest]) (*connect_go.Response[v1.FetchTaskResponse], error)
 	// UpdateTask updates the task status.
@@ -52,6 +54,11 @@ func NewRunnerServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 			baseURL+"/runner.v1.RunnerService/Register",
 			opts...,
 		),
+		declare: connect_go.NewClient[v1.DeclareRequest, v1.DeclareResponse](
+			httpClient,
+			baseURL+"/runner.v1.RunnerService/Declare",
+			opts...,
+		),
 		fetchTask: connect_go.NewClient[v1.FetchTaskRequest, v1.FetchTaskResponse](
 			httpClient,
 			baseURL+"/runner.v1.RunnerService/FetchTask",
@@ -73,6 +80,7 @@ func NewRunnerServiceClient(httpClient connect_go.HTTPClient, baseURL string, op
 // runnerServiceClient implements RunnerServiceClient.
 type runnerServiceClient struct {
 	register   *connect_go.Client[v1.RegisterRequest, v1.RegisterResponse]
+	declare    *connect_go.Client[v1.DeclareRequest, v1.DeclareResponse]
 	fetchTask  *connect_go.Client[v1.FetchTaskRequest, v1.FetchTaskResponse]
 	updateTask *connect_go.Client[v1.UpdateTaskRequest, v1.UpdateTaskResponse]
 	updateLog  *connect_go.Client[v1.UpdateLogRequest, v1.UpdateLogResponse]
@@ -81,6 +89,11 @@ type runnerServiceClient struct {
 // Register calls runner.v1.RunnerService.Register.
 func (c *runnerServiceClient) Register(ctx context.Context, req *connect_go.Request[v1.RegisterRequest]) (*connect_go.Response[v1.RegisterResponse], error) {
 	return c.register.CallUnary(ctx, req)
+}
+
+// Declare calls runner.v1.RunnerService.Declare.
+func (c *runnerServiceClient) Declare(ctx context.Context, req *connect_go.Request[v1.DeclareRequest]) (*connect_go.Response[v1.DeclareResponse], error) {
+	return c.declare.CallUnary(ctx, req)
 }
 
 // FetchTask calls runner.v1.RunnerService.FetchTask.
@@ -102,6 +115,8 @@ func (c *runnerServiceClient) UpdateLog(ctx context.Context, req *connect_go.Req
 type RunnerServiceHandler interface {
 	// Register register a new runner in server.
 	Register(context.Context, *connect_go.Request[v1.RegisterRequest]) (*connect_go.Response[v1.RegisterResponse], error)
+	// Declare declare runner's version and labels to Gitea before starting fetching task.
+	Declare(context.Context, *connect_go.Request[v1.DeclareRequest]) (*connect_go.Response[v1.DeclareResponse], error)
 	// FetchTask requests the next available task for execution.
 	FetchTask(context.Context, *connect_go.Request[v1.FetchTaskRequest]) (*connect_go.Response[v1.FetchTaskResponse], error)
 	// UpdateTask updates the task status.
@@ -120,6 +135,11 @@ func NewRunnerServiceHandler(svc RunnerServiceHandler, opts ...connect_go.Handle
 	mux.Handle("/runner.v1.RunnerService/Register", connect_go.NewUnaryHandler(
 		"/runner.v1.RunnerService/Register",
 		svc.Register,
+		opts...,
+	))
+	mux.Handle("/runner.v1.RunnerService/Declare", connect_go.NewUnaryHandler(
+		"/runner.v1.RunnerService/Declare",
+		svc.Declare,
 		opts...,
 	))
 	mux.Handle("/runner.v1.RunnerService/FetchTask", connect_go.NewUnaryHandler(
@@ -145,6 +165,10 @@ type UnimplementedRunnerServiceHandler struct{}
 
 func (UnimplementedRunnerServiceHandler) Register(context.Context, *connect_go.Request[v1.RegisterRequest]) (*connect_go.Response[v1.RegisterResponse], error) {
 	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("runner.v1.RunnerService.Register is not implemented"))
+}
+
+func (UnimplementedRunnerServiceHandler) Declare(context.Context, *connect_go.Request[v1.DeclareRequest]) (*connect_go.Response[v1.DeclareResponse], error) {
+	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("runner.v1.RunnerService.Declare is not implemented"))
 }
 
 func (UnimplementedRunnerServiceHandler) FetchTask(context.Context, *connect_go.Request[v1.FetchTaskRequest]) (*connect_go.Response[v1.FetchTaskResponse], error) {
