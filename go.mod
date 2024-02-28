@@ -3,6 +3,6 @@ module code.gitea.io/actions-proto-go
 go 1.19
 
 require (
-	github.com/bufbuild/connect-go v1.3.1
-	google.golang.org/protobuf v1.28.1
+	connectrpc.com/connect v1.15.0
+	google.golang.org/protobuf v1.32.0
 )
