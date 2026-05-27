@@ -5,10 +5,10 @@
 package runnerv1connect
 
 import (
-	v1 "code.gitea.io/actions-proto-go/runner/v1"
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
+	v1 "gitea.dev/actions-proto-go/runner/v1"
 	http "net/http"
 	strings "strings"
 )
