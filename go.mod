@@ -1,4 +1,4 @@
-module code.gitea.io/actions-proto-go
+module gitea.dev/actions-proto-go
 
 go 1.19
 
